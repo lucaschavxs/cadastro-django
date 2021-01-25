@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Cadastro{% endblock %}
+
+
+
+{% block content %}
+    <h2>Cadastro</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+
+
+<!--cep-->
+        
+
+<div class="form-group">
+  <label stclass="col-xs- control-label" for="CEP">CEP* </label>
+  <div class="col-xs-">
+  
+    <input id="cep" name="cep" placeholder="Apenas números" class="form-control input-md" required="" value="" type="search" maxlength="8" >
+    <p></p>
+    <button type="button" class="btn btn-primary" onclick="pesquisacep(cep.value)">Pesquisar</button>
+
+  </div>
+</div>   
+
+ <!----><p></p>
+
+
+    
+    <div class="col-xs-input-group">
+    <div class="col-xs-">
+      <span class="input-group-addon">Rua* &nbsp; </span>
+      <input id="rua" name="rua" class="form-control" placeholder="" required="" readonly="readonly" type="text">
+    </div>
+    <stylesheet>
+
+    <!----><p></p>
+
+    </div>
+       <div class="col-xs-input-group">
+       <div class="col-xs-">
+      <span class="input-group-addon">Numero*&nbsp; </span>
+      <input id="numero" name="numero" class="form-control" placeholder="" required=""  type="text">
+    </div>
+
+    <!----><p></p>
+
+    <div class="col-xs-input-group">
+    <div class="col-xs-">
+      <span class="input-group-addon">Bairro*&nbsp; </span>
+      <input id="bairro" name="bairro" class="form-control" placeholder="" required="" readonly="readonly" type="text">
+    </div>
+
+    <!----><p></p>
+
+    <div class="col-xs-form-group">
+  <label class="col-xs- control-label" for="prependedtext"></label>
+  
+    <div class="col-xs-input-group">
+    <div class="col-xs-">
+      <span class="input-group-addon">Cidade*&nbsp;</span>
+      <input id="cidade" name="cidade" class="form-control" placeholder="" required=""  readonly="readonly" type="text">
+    </div>
+    
+  <!----><p></p>
+  
+    <div class="col-xs-input-group">
+    <div class="col-xs-">
+      <span class="input-group-addon">Estado*&nbsp;</span>
+      <input id="estado" name="estado" class="form-control" placeholder="" required=""  readonly="readonly" type="text">
+    </div>
+    
+  </div>
+
+  <!----><p></p>
+
+  <!--comentarios -->
+<div class="form-group">
+  <label class="col-xs- control-label" for="obs">Obs* </label>  
+  <div class="col-xs-">
+  <textarea class="form-control" id="obs" name="obs"></textarea>
+  </div>
+</div>
+
+ 
+<script>
+ 
+   function limpa_formulario_cep() {
+    //Limpa valores do formulário de cep.
+    document.getElementById('rua').value=("");
+    document.getElementById('bairro').value=("");
+    document.getElementById('cidade').value=("");
+    document.getElementById('estado').value=("");   }
+
+function meu_callback(conteudo) {
+if (!("erro" in conteudo)) {
+    //Atualiza os campos com os valores.
+    document.getElementById('rua').value=(conteudo.logradouro);
+    document.getElementById('bairro').value=(conteudo.bairro);
+    document.getElementById('cidade').value=(conteudo.localidade);
+    document.getElementById('estado').value=(conteudo.uf);} 
+else {
+    //CEP não Encontrado.
+    limpa_formulario_cep();
+    alert("CEP não encontrado.");
+    document.getElementById('cep').value=("");}}
+
+function pesquisacep(valor) {
+var cep = valor.replace(/\D/g, '');
+if (cep !== "") {
+
+    //Expressão regular para validar o CEP.
+    var validacep = /^[0-9]{8}$/;
+
+    //Valida o formato do CEP.
+    if(validacep.test(cep)) {
+
+        //Preenche os campos com "..." enquanto consulta webservice.
+        document.getElementById('rua').value="...";
+        document.getElementById('bairro').value="...";
+        document.getElementById('cidade').value="...";
+        document.getElementById('estado').value="...";
+
+        //Cria um elemento javascript.
+        var script = document.createElement('script');
+
+        //Sincroniza com o callback.
+        script.src = '//viacep.com.br/ws/'+ cep + '/json/?callback=meu_callback';
+
+        //Insere script no documento e carrega o conteúdo.
+        document.body.appendChild(script);
+
+    } //end if.
+    else {
+        //cep é inválido.
+        limpa_formulario_cep();
+        alert("Formato de CEP inválido.");
+    }} //end if.
+else {
+    //cep sem valor, limpa formulário.
+    limpa_formulario_cep();}
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+<button class="btn btn-success" type="submit">Cadastrar</button>
+
+    </form>
+
+
+{% endblock %}
